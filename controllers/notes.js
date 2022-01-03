@@ -8,7 +8,7 @@ route.get("/", async (req, res) => {
     const notes1 = await notes.find({});
     res.json(notes1);
   } catch (err) {
-    res.send("Error : " + err);
+    res.json({msg: "Error getting the notes"})
   }
 });
 
@@ -18,7 +18,7 @@ route.get("/:id", async (req, res) => {
     const notes1 = await notes.findById(req.params.id);
     res.json(notes1);
   } catch (err) {
-    res.send("Error : " + err);
+    res.json({msg: "Error getting the note"})
   }
 });
 
@@ -33,7 +33,7 @@ route.post("/add", async (req, res) => {
     const note11 = await notes1.save();
     res.json(note11);
   } catch (err) {
-    res.send("Error : " + err);
+    res.json({ msg:err.message });
   }
 });
 
@@ -48,9 +48,9 @@ route.post("/edit", async (req, res) => {
         description,
       }
     );
-    res.json(notes1);
+    res.json({ msg: "Note Edited successfully" });
   } catch (err) {
-    res.send("Error : " + err);
+    res.json({ msg: "Error Updating the note" });
   }
 });
 
@@ -59,9 +59,9 @@ route.post("/delete", async (req, res) => {
   try {
     const notes1 = await notes.findById(req.body.id);
     notes1.remove();
-    res.json(notes1);
+    res.json({ msg: "Note deleted successfully" });
   } catch (err) {
-    res.send("Error : " + err);
+    res.json({ msg: "Error Deleting the note" });
   }
 });
 

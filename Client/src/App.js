@@ -1,12 +1,14 @@
 import React from "react";
 import Toolbar from "./Components/Toolbar/Toolbar";
-import Grid from "./Components/Grid/Grid";
+import Notes from "./Components/Notes/Notes";
+import Footer from "./Components/Footer/Footer";
 
 const App = () => {
   return (
     <>
         <Toolbar />
-        <Grid />
+        <Notes />
+        <Footer />
     </>
   );
 };
