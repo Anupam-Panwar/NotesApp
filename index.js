@@ -24,7 +24,6 @@ mongoose.connect(
 app.use((req, res, next) => {
   console.log(" -> Request received  <- ");
   console.log(process.env.PORT + " -- " + req.url + " --  " + req.method);
-
   next();
 });
 

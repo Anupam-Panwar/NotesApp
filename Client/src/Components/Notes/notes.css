@@ -5,3 +5,13 @@
   z-index: 1;
   position: fixed;
 }
+
+.date {
+  font-family: "Roboto", sans-serif;
+  padding: 5px;
+}
+
+.description {
+  max-height: 100px;
+  overflow-y: auto;
+}

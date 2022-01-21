@@ -20,11 +20,15 @@ import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
+import Toolbar from "../Toolbar/Toolbar";
+import { ToastContainer, toast } from "react-toastify";
 import "./notes.css";
+import "react-toastify/dist/ReactToastify.css";
 
 const theme = createTheme();
 
 export default function Album() {
+  let [search, setSearch] = useState("");
   let [cards, setCards] = React.useState([]);
   useEffect(() => {
     axios
@@ -36,7 +40,7 @@ export default function Album() {
         console.log(err);
       });
   }, []);
-  
+
   let [edit, setEdit] = useState(false);
   let [title, setTitle] = useState("");
   let [description, setDescription] = useState("");
@@ -63,13 +67,10 @@ export default function Album() {
     setOpen(false);
     edit.title = title;
     edit.description = description;
+    edit.date = new Date();
     editNote(edit);
     setTitle("");
     setDescription("");
-  };
-
-  const refreshPage = () => {
-    window.location.reload(false);
   };
 
   const editButtonClick = (note) => {
@@ -85,9 +86,11 @@ export default function Album() {
       .then((res) => {
         setCards(cards.filter((card) => card._id !== id));
         console.log(res);
+        toast.success("Note Successfully Deleted");
       })
       .catch((err) => {
         console.log(err);
+        toast.warn("Error Deleting Note");
       });
   };
 
@@ -95,11 +98,12 @@ export default function Album() {
     axios
       .post("http://localhost:8000/notes/add", { title, description })
       .then((res) => {
-        console.log(res);
-        refreshPage();
+        setCards([...cards, res.data]);
+        toast.success("Note Successfully Added");
       })
       .catch((err) => {
         console.log(err);
+        toast.warn("Error Adding Note");
       });
   };
 
@@ -107,56 +111,93 @@ export default function Album() {
     axios
       .post("http://localhost:8000/notes/edit", { notes })
       .then((res) => {
-        console.log(res);
+        setCards(cards.map((card) => (card._id === notes._id ? notes : card)));
         setEdit(false);
+        toast.success("Note Successfully Edited");
       })
       .catch((err) => {
         console.log(err);
+        toast.warn("Error Editing Note");
       });
   };
-
   return (
     <ThemeProvider theme={theme}>
+      <Toolbar search={search} setSearch={setSearch} />
+      <ToastContainer
+        position="bottom-left"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+      />
       <CssBaseline />
-      <main className="bg">
+      <main>
         <Container sx={{ py: 8 }} maxWidth="md">
           {/* End hero unit */}
           <Grid container spacing={4}>
             {cards.length === 0 ? (
               <Typography component="h5">No Notes</Typography>
             ) : (
-              cards.map((val, index) => (
-                <Grid item key={val} xs={12} sm={6} md={4}>
-                  <Card
-                    sx={{
-                      height: "100%",
-                      display: "flex",
-                      flexDirection: "column",
-                    }}
-                  >
-                    <CardContent sx={{ flexGrow: 1 }}>
-                      <Typography gutterBottom variant="h5" component="h2">
-                        {val.title}
-                      </Typography>
-                      <Typography>{val.description}</Typography>
-                    </CardContent>
-                    <CardActions>
-                      <ButtonGroup
-                        variant="text"
-                        aria-label="outlined button group"
-                        fullWidth={true}
+              cards
+                .filter((val) => {
+                  if (search === "") return val;
+                  else if (
+                    val.title.toLowerCase().includes(search.toLowerCase()) ||
+                    val.description.toLowerCase().includes(search.toLowerCase())
+                  )
+                    return val;
+                })
+                .map((val) => (
+                  <Grid item key={val} xs={12} sm={6} md={4}>
+                    <Card
+                      sx={{
+                        height: "100%",
+                        display: "flex",
+                        flexDirection: "column",
+                        border: "1px rgb(65, 42, 42) double",
+                      }}
+                      variant="outlined"
+                    >
+                      <CardContent sx={{ flexGrow: 1 }}>
+                        <Typography gutterBottom variant="h5" component="h2">
+                          {val.title}
+                        </Typography>
+                        <Typography className="description">
+                          {val.description}
+                        </Typography >
+                      </CardContent>
+                      <CardActions
+                        sx={{
+                          justifyContent: "space-between",
+                        }}
                       >
-                        <Button onClick={() => editButtonClick(val)}>
-                          <EditIcon />
-                        </Button>
-                        <Button onClick={() => deleteNote(val._id)}>
-                          <DeleteIcon />
-                        </Button>
-                      </ButtonGroup>
-                    </CardActions>
-                  </Card>
-                </Grid>
-              ))
+                        <div className="date">
+                          {new Date(val.date).getDate() +
+                            "/" +
+                            (new Date(val.date).getMonth() + 1) +
+                            "/" +
+                            new Date(val.date).getFullYear()}
+                        </div>
+
+                        <ButtonGroup
+                          variant="text"
+                          aria-label="outlined button group"
+                        >
+                          <Button onClick={() => editButtonClick(val)}>
+                            <EditIcon />
+                          </Button>
+                          <Button onClick={() => deleteNote(val._id)}>
+                            <DeleteIcon />
+                          </Button>
+                        </ButtonGroup>
+                      </CardActions>
+                    </Card>
+                  </Grid>
+                ))
             )}
           </Grid>
         </Container>

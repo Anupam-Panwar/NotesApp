@@ -3,7 +3,7 @@ import Box from "@mui/material/Box";
 
 const Footer = () => {
   return (
-    <Box sx={{ bgcolor: "background.paper", p: 6 }} component="footer">
+    <Box sx={{ p: 6 }} component="footer">
       <Typography variant="h6" align="center" gutterBottom>
         Notes App
       </Typography>
@@ -19,7 +19,7 @@ const Footer = () => {
           alt="heart"
           style={{ height: "20px" }}
         />{" "}
-        by Anupam Panwar
+        by <a href="https://www.linkedin.com/in/anupam-panwar/" style={{textDecoration: 'none', color:"#5b586f"}}>Anupam Panwar</a>
       </Typography>
     </Box>
   );

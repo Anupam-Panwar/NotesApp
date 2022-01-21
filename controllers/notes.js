@@ -24,9 +24,11 @@ route.get("/:id", async (req, res) => {
 
 // To add a new note to the database
 route.post("/add", async (req, res) => {
+    let date = new Date();
   const notes1 = new notes({
     title: req.body.title,
     description: req.body.description,
+    date: date
   });
 
   try {
@@ -40,12 +42,14 @@ route.post("/add", async (req, res) => {
 // To edit a note in the database
 route.post("/edit", async (req, res) => {
   try {
-    const { title, description } = req.body;
+    let date = new Date();
+    const { title, description } = req.body.notes;
     const notes1 = await notes.findOneAndUpdate(
-      { _id: req.body.id },
+      { _id: req.body.notes._id },
       {
         title,
         description,
+        date
       }
     );
     res.json({ msg: "Note Edited successfully" });

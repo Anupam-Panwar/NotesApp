@@ -9,6 +9,10 @@ const notesSchema = new mongoose.Schema({
         type: String,
         required: true,
         default: ""
+    },
+    date: {
+        type: Date,
+        required: true
     }
 });
 
