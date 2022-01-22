@@ -32,7 +32,7 @@ export default function Album() {
   let [cards, setCards] = React.useState([]);
   useEffect(() => {
     axios
-      .get("http://localhost:8000/notes")
+      .get("/notes")
       .then((res) => {
         setCards(res.data);
       })
@@ -82,7 +82,7 @@ export default function Album() {
 
   const deleteNote = (id) => {
     axios
-      .post("http://localhost:8000/notes/delete", { id })
+      .post("/notes/delete", { id })
       .then((res) => {
         setCards(cards.filter((card) => card._id !== id));
         console.log(res);
@@ -96,7 +96,7 @@ export default function Album() {
 
   const addNote = () => {
     axios
-      .post("http://localhost:8000/notes/add", { title, description })
+      .post("/notes/add", { title, description })
       .then((res) => {
         setCards([...cards, res.data]);
         toast.success("Note Successfully Added");
@@ -109,7 +109,7 @@ export default function Album() {
 
   const editNote = (notes) => {
     axios
-      .post("http://localhost:8000/notes/edit", { notes })
+      .post("/notes/edit", { notes })
       .then((res) => {
         setCards(cards.map((card) => (card._id === notes._id ? notes : card)));
         setEdit(false);
