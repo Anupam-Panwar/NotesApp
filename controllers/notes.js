@@ -5,7 +5,6 @@ const notes = require("../models/notes");
 // To get all notes from the database
 route.get("/", async (req, res) => {
   try {
-      console.log("Getting all notes");
     const notes1 = await notes.find({});
     res.json(notes1);
   } catch (err) {
