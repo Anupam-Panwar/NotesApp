@@ -20,6 +20,7 @@ mongoose.connect(
   }
 );
 
+
 // Middleware to print the request details
 app.use((req, res, next) => {
   console.log(" -> Request received  <- ");
@@ -27,13 +28,15 @@ app.use((req, res, next) => {
   next();
 });
 
-
-app.get("/", (req, res) => {
-    res.send("Hello World");
-});
-
 // Route to process the request related to notes
 app.use("/notes", require("./controllers/notes"));
+
+if(process.env.NODE_ENV === "production"){
+    app.use(express.static(__dirname + "/client/build"));
+    app.get("*", (req, res) => {
+        res.sendFile(path.resolve(__dirname,'client','build','index.html'));
+    });
+}
 
 app.listen(process.env.PORT || 8000, (err) => {
   if (err) {
