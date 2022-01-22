@@ -27,10 +27,15 @@ app.use((req, res, next) => {
   next();
 });
 
+
+app.get("/", (req, res) => {
+    res.send("Hello World");
+});
+
 // Route to process the request related to notes
 app.use("/notes", require("./controllers/notes"));
 
-app.listen(process.env.PORT, (err) => {
+app.listen(process.env.PORT || 8000, (err) => {
   if (err) {
     console.log("Error in starting server");
   } else {
