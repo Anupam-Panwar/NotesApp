@@ -20,6 +20,7 @@ import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
+import { Backdrop, Grow, Alert } from "@mui/material";
 import Toolbar from "../Toolbar/Toolbar";
 import { ToastContainer, toast } from "react-toastify";
 import "./notes.css";
@@ -29,7 +30,7 @@ const theme = createTheme();
 
 export default function Album() {
   let [search, setSearch] = useState("");
-  let [cards, setCards] = React.useState([]);
+  let [cards, setCards] = useState(null);
   useEffect(() => {
     axios
       .get("/notes")
@@ -139,65 +140,90 @@ export default function Album() {
         <Container sx={{ py: 8 }} maxWidth="md">
           {/* End hero unit */}
           <Grid container spacing={4}>
-            {cards.length === 0 ? (
-              <Typography component="h5">No Notes</Typography>
+            {cards == null ? (
+              <Backdrop
+                sx={{
+                  color: "#fff",
+                  backdropFilter: "blur(100px)",
+                  zIndex: (theme) => theme.zIndex.drawer + 1,
+                }}
+                open={true}
+              >
+                <Typography variant="h2"> Loading... </Typography>
+              </Backdrop>
             ) : (
-              cards
-                .filter((val) => {
-                  if (search === "") return val;
-                  else if (
-                    val.title.toLowerCase().includes(search.toLowerCase()) ||
-                    val.description.toLowerCase().includes(search.toLowerCase())
-                  )
-                    return val;
-                })
-                .map((val) => (
-                  <Grid item key={val} xs={12} sm={6} md={4}>
-                    <Card
-                      sx={{
-                        height: "100%",
-                        display: "flex",
-                        flexDirection: "column",
-                        border: "1px rgb(65, 42, 42) double",
-                      }}
-                      variant="outlined"
-                    >
-                      <CardContent sx={{ flexGrow: 1 }}>
-                        <Typography gutterBottom variant="h5" component="h2">
-                          {val.title}
-                        </Typography>
-                        <Typography className="description">
-                          {val.description}
-                        </Typography >
-                      </CardContent>
-                      <CardActions
-                        sx={{
-                          justifyContent: "space-between",
-                        }}
-                      >
-                        <div className="date">
-                          {new Date(val.date).getDate() +
-                            "/" +
-                            (new Date(val.date).getMonth() + 1) +
-                            "/" +
-                            new Date(val.date).getFullYear()}
-                        </div>
+              <>
+                {cards.length === 0 ? (
+                  <Typography variant="h4">No Notes</Typography>
+                ) : (
+                  cards
+                    .filter((val) => {
+                      if (search === "") return val;
+                      else if (
+                        val.title
+                          .toLowerCase()
+                          .includes(search.toLowerCase()) ||
+                        val.description
+                          .toLowerCase()
+                          .includes(search.toLowerCase())
+                      )
+                        return val;
+                    })
+                    .map((val) => (
+                      <Grow in={true} timeout={800}>
+                        <Grid item key={val} xs={12} sm={6} md={4}>
+                          <Card
+                            sx={{
+                              height: "100%",
+                              display: "flex",
+                              flexDirection: "column",
+                              border: "1px rgb(65, 42, 42) double",
+                            }}
+                            variant="outlined"
+                          >
+                            <CardContent sx={{ flexGrow: 1 }}>
+                              <Typography
+                                gutterBottom
+                                variant="h5"
+                                component="h2"
+                              >
+                                {val.title}
+                              </Typography>
+                              <Typography className="description">
+                                {val.description}
+                              </Typography>
+                            </CardContent>
+                            <CardActions
+                              sx={{
+                                justifyContent: "space-between",
+                              }}
+                            >
+                              <div className="date">
+                                {new Date(val.date).getDate() +
+                                  "/" +
+                                  (new Date(val.date).getMonth() + 1) +
+                                  "/" +
+                                  new Date(val.date).getFullYear()}
+                              </div>
 
-                        <ButtonGroup
-                          variant="text"
-                          aria-label="outlined button group"
-                        >
-                          <Button onClick={() => editButtonClick(val)}>
-                            <EditIcon />
-                          </Button>
-                          <Button onClick={() => deleteNote(val._id)}>
-                            <DeleteIcon />
-                          </Button>
-                        </ButtonGroup>
-                      </CardActions>
-                    </Card>
-                  </Grid>
-                ))
+                              <ButtonGroup
+                                variant="text"
+                                aria-label="outlined button group"
+                              >
+                                <Button onClick={() => editButtonClick(val)}>
+                                  <EditIcon />
+                                </Button>
+                                <Button onClick={() => deleteNote(val._id)}>
+                                  <DeleteIcon />
+                                </Button>
+                              </ButtonGroup>
+                            </CardActions>
+                          </Card>
+                        </Grid>
+                      </Grow>
+                    ))
+                )}
+              </>
             )}
           </Grid>
         </Container>
