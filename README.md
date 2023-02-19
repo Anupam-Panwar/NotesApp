@@ -15,5 +15,5 @@
 
 ## Deployment
 
-To run this project click [here](https://mern-notes-application.herokuapp.com/)
+To run this project click [here](https://excited-visor-crow.cyclic.app/)
 
